@@ -84,14 +84,48 @@ app.post("/posts", async (req, res) => {
 // Viết API cho phép user chỉnh sửa lại bài post (chỉ user tạo bài viết mới được phép chỉnh sửa).
 app.put("/posts/:postId", async (req, res) => {
   try {
-    const { id } = req.params.postId;
+    const id = req.params.postId;
     const { content, authorId } = req.body;
-    if (!content || !authorId)
+
+    if (!content || !authorId) {
+      console.log(content, authorId);
       throw {
-        message: "Thong tin bai post khong day du",
+        message: "chua du thong tin de chinh sua",
         statusCode: 400,
       };
-    // const checkPost
+    }
+
+    const checkPost = await axios.get(`${API_JSON_SERVER}/posts/${id}`);
+    console.log(checkPost);
+    if (!checkPost || !checkPost.data) {
+      throw {
+        message: "PostId không tồn tại",
+        statusCode: 404,
+      };
+    }
+
+    if (checkPost.data.authorId !== authorId) {
+      throw {
+        message: "Ban khong co quyen chinh sua bai viet nay",
+        statusCode: 403,
+      };
+    }
+
+    const updatedPost = {
+      id: id,
+      content: content,
+      authorId: authorId,
+    };
+
+    const updatePost = await axios.put(
+      `${API_JSON_SERVER}/posts/${id}`,
+      updatedPost
+    );
+
+    res.status(200).send({
+      message: "Chinh sua bai viet thanh cong",
+      data: updatePost.data,
+    });
   } catch (error) {
     res.status(error.statusCode || 500).send({
       message: error.message || "Có lỗi xảy ra",
