@@ -1,0 +1,45 @@
+{
+  "users": [
+    {
+      "id": "US001",
+      "userName": "MindX"
+    },
+    {
+      "id": "US002",
+      "useName": "Nobi Nobita"
+    },
+    {
+      "id": "US6a3a874d-f126-4f0f-a944-a649db2315aa",
+      "userName": "Nydepzai"
+    },
+    {
+      "id": "USad79ec9d-785a-4473-8ea8-3df07e95016f",
+      "userName": "Nydepzai"
+    }
+  ],
+  "posts": [
+    {
+      "id": "PS001",
+      "content": "Nội dung học về JSON Server!",
+      "authorId": "US001"
+    },
+    {
+      "id": "PS8094a378-6454-44f6-85e4-8b3a963be337",
+      "content": "Em yeu anh Nydepzai",
+      "authorID": "USad79ec9d-785a-4473-8ea8-3df07e95016f"
+    },
+    {
+      "id": "PS5642b24b-3bb5-4a02-bb12-38a410aeda98",
+      "content": "Em yeu anh Nydepzai v1",
+      "authorID": "USad79ec9d-785a-4473-8ea8-3df07e95016f"
+    }
+  ],
+  "comments": [
+    {
+      "id": "CMT001",
+      "postId": "PS001",
+      "content": "Bài học này rất ý nghĩa! Cảm ơn MindX!",
+      "authorId": "US002"
+    }
+  ]
+}
