@@ -14,7 +14,7 @@
     },
     {
       "id": "USad79ec9d-785a-4473-8ea8-3df07e95016f",
-      "userName": "Nydepzai"
+      "userName": "Nydepzai2"
     }
   ],
   "posts": [
@@ -26,7 +26,21 @@
     {
       "id": "PS8094a378-6454-44f6-85e4-8b3a963be337",
       "content": "Em yeu anh Nydepzai",
-      "authorID": "USad79ec9d-785a-4473-8ea8-3df07e95016f"
+      "authorID": "USad79ec9d-785a-4473-8ea8-3df07e95016f",
+      "comments": [
+        {
+          "id": "CMTd9003e03-8533-4698-b8f4-8db7963dfa7a",
+          "postId": "PS8094a378-6454-44f6-85e4-8b3a963be337",
+          "content": "Anh Ny that tuyet zoi`",
+          "authorId": "USad79ec9d-785a-4473-8ea8-3df07e95016f"
+        },
+        {
+          "id": "CMT06b9805b-ae0d-4eb6-a697-de79735f2c5f",
+          "postId": "PS8094a378-6454-44f6-85e4-8b3a963be337",
+          "content": "Anh Ny depzai bien thai`",
+          "authorId": "USad79ec9d-785a-4473-8ea8-3df07e95016f"
+        }
+      ]
     },
     {
       "id": "PS5642b24b-3bb5-4a02-bb12-38a410aeda98",
@@ -40,6 +54,24 @@
       "postId": "PS001",
       "content": "Bài học này rất ý nghĩa! Cảm ơn MindX!",
       "authorId": "US002"
+    },
+    {
+      "id": "CMTcb1abf0b-657d-4774-8df1-5ba775e1b94d",
+      "postId": "PS001",
+      "content": "Em yeu anh Nydepzai",
+      "authorId": "USad79ec9d-785a-4473-8ea8-3df07e95016f"
+    },
+    {
+      "id": "CMT3e811933-f3e5-4980-83d0-1270d4931eb8",
+      "postId": "PS001",
+      "content": "Anh Ny that tuyet zoi`",
+      "authorId": "USad79ec9d-785a-4473-8ea8-3df07e95016f"
+    },
+    {
+      "id": "CMT06b9805b-ae0d-4eb6-a697-de79735f2c5f",
+      "postId": "PS8094a378-6454-44f6-85e4-8b3a963be337",
+      "content": "Anh Ny depzai bien thai cute pho mai que 2",
+      "authorId": "USad79ec9d-785a-4473-8ea8-3df07e95016f"
     }
   ]
 }
