@@ -7,6 +7,21 @@ const API_JSON_SERVER = "http://localhost:3000";
 
 app.use(express.json());
 
+const ERROR_MESSAGES = {
+  BadRequest: "Bad request. Invalid input data.",
+  Forbidden: "Forbidden. You don't have permission.",
+  NotFound: "Resource not found.",
+  ServerError: "Internal server error.",
+};
+
+function handleError(res, error) {
+  const statusCode = error.response ? error.response.status : 500;
+  const message = error.response
+    ? error.response.data.message
+    : ERROR_MESSAGES.ServerError;
+  res.status(statusCode).send({ message, data: null });
+}
+
 app.get("", (req, res) => {
   res.send({
     message: "Hello kenny",
@@ -166,27 +181,24 @@ app.post("/posts/:id/comments", async (req, res) => {
       authorId,
     };
 
-    const updatedPost = {
-      ...checkPost.data,
-      comments: [...(checkPost.data.comments || []), newComment],
-    };
+    // const updatedPost = {
+    //   ...checkPost.data,
+    //   comments: [...(checkPost.data.comments || []), newComment],
+    // };
 
     const createComment = await axios.post(
       `${API_JSON_SERVER}/comments`,
       newComment
     );
 
-    const updatePost = await axios.put(
-      `${API_JSON_SERVER}/posts/${checkPost.data.id}`,
-      updatedPost
-    );
+    // const updatePost = await axios.put(
+    //   `${API_JSON_SERVER}/posts/${checkPost.data.id}`,
+    //   updatedPost
+    // );
 
     res.status(201).send({
       message: "Dang comment thanh cong",
-      data: {
-        comment: createComment.data,
-        updatedPost: updatePost.data,
-      },
+      data: createComment.data,
     });
   } catch (error) {
     res.status(error.statusCode || 500).send({
@@ -248,6 +260,105 @@ app.put("/posts/:postId/comments/:commentId", async (req, res) => {
   } catch (error) {
     res.status(error.statusCode || 500).send({
       message: error.message || "co loi khi sua comment",
+      data: null,
+    });
+  }
+});
+
+// Viết API lấy tất cả comment của một bài post.
+app.get("/posts/:postId/comments", async (req, res) => {
+  try {
+    const postId = req.params.postId;
+    const checkPost = await axios.get(`${API_JSON_SERVER}/posts/${postId}`);
+
+    if (!checkPost || !checkPost.data) {
+      throw {
+        message: "Bai post khong ton tai",
+        statusCode: 404,
+      };
+    }
+
+    const getComments = await axios.get(`${API_JSON_SERVER}/comments`);
+
+    const listComments = [...getComments.data];
+
+    const commentsOfPost = listComments.filter(
+      (comment) => comment.postId === postId
+    );
+
+    res.send({
+      message: "Lay comments cua bai post thanh cong",
+      data: commentsOfPost,
+    });
+  } catch (error) {
+    res.status(error.statusCode || 500).send({
+      message: error.message || "co loi khi lay comment cua bai viet",
+      data: null,
+    });
+  }
+});
+
+// Viết API lấy một bài post và tất cả comment của bài post đó thông qua postId.
+app.get("/posts/:postId", async (req, res) => {
+  try {
+    const postId = req.params.postId;
+
+    const checkPost = await axios.get(`${API_JSON_SERVER}/posts/${postId}`);
+    if (!checkPost || !checkPost.data)
+      throw {
+        message: "Khong tim thay bai viet",
+        statusCode: 404,
+      };
+    const postData = checkPost.data;
+    const checkComments = await axios.get(`${API_JSON_SERVER}/comments`);
+    const allComments = checkComments.data;
+    const commentsOfPost = allComments.filter(
+      (comment) => comment.postId === postId
+    );
+    res.send({
+      message: "Lấy bài post và comment thành công",
+      data: {
+        post: postData,
+        comments: commentsOfPost,
+      },
+    });
+  } catch (error) {
+    res.status(error.statusCode || 500).send({
+      message: error.message || "co loi khi lay comment cua bai viet",
+      data: null,
+    });
+  }
+});
+
+// Viết API lấy tất cả các bài post, 3 comment đầu (dựa theo index) của tất cả user
+app.get("/posts-with-comments", async (req, res) => {
+  try {
+    const postResponse = await axios.get(`${API_JSON_SERVER}/posts`);
+    const allPosts = postResponse.data;
+
+    const commentResponse = await axios.get(`${API_JSON_SERVER}/comments`);
+    const allComments = commentResponse.data;
+
+    // Map posts to include the first three comments
+    const postsWithComments = await Promise.all(
+      allPosts.map(async (post) => {
+        const postComments = allComments
+          .filter((comment) => comment.postId === post.id)
+          .slice(0, 3);
+        return {
+          ...post,
+          comments: postComments,
+        };
+      })
+    );
+
+    res.status(200).send({
+      message: "Lấy bài viết cùng với ba bình luận đầu thành công",
+      data: postsWithComments,
+    });
+  } catch (error) {
+    res.status(error.statusCode || 500).send({
+      message: error.message || "co loi xay ra khi lay bai viet va binh luan",
       data: null,
     });
   }
