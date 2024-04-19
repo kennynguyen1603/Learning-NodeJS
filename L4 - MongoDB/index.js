@@ -225,6 +225,34 @@ app.get("/api/v1/posts/:postId", async (req, res) => {
   }
 });
 
+// Viết API lấy tất cả các bài post, 3 comment đầu (dựa theo index) của tất cả user.
+app.get("/api/v1/post-with-comments", async (req, res) => {
+  try {
+    const postsResponse = await PostsModel.find();
+    const postWithComments = await Promise.all(
+      postsResponse.map(async (post) => {
+        const postComments = await CommentsModel.find({
+          postId: post._id,
+        }).limit(3);
+        return {
+          ...post.toObject(),
+          comments: postComments,
+        };
+      })
+    );
+    res.status(200).send({
+      message: "Lấy bài viết cùng với ba bình luận đầu thành công",
+      data: postWithComments,
+    });
+  } catch (error) {
+    res.status(500).send({
+      message: "Failed to retrieve comments",
+      success: false,
+      data: null,
+    });
+  }
+});
+
 app.listen(8080, () => {
   console.log("Server is running!");
 });
