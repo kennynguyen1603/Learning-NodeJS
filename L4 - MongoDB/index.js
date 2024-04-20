@@ -192,7 +192,7 @@ app.get("/api/v1/posts/:postId/comments", async (req, res) => {
   }
 });
 
-// Viết API lấy một bài post và tất cả comment của bài post đó thông qua postId.
+// 8. Viết API lấy một bài post và tất cả comment của bài post đó thông qua postId.
 app.get("/api/v1/posts/:postId", async (req, res) => {
   try {
     const { postId } = req.params;
@@ -225,7 +225,7 @@ app.get("/api/v1/posts/:postId", async (req, res) => {
   }
 });
 
-// Viết API lấy tất cả các bài post, 3 comment đầu (dựa theo index) của tất cả user.
+//7. Viết API lấy tất cả các bài post, 3 comment đầu (dựa theo index) của tất cả user.
 app.get("/api/v1/post-with-comments", async (req, res) => {
   try {
     const postsResponse = await PostsModel.find();
