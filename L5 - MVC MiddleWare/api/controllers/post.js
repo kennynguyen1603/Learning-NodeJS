@@ -30,22 +30,17 @@ const postsController = {
   // 3. Viết API cho phép user chỉnh sửa lại bài post (chỉ user tạo bài viết mới được phép chỉnh sửa).
   updatePost: async (req, res) => {
     try {
-      const { postId } = req.params;
-      const { content, userId } = req.body;
+      const { content } = req.body;
+      const { post } = req; // Truy cập trực tiếp từ req.post
+
       if (!content) throw new Error("Content is required!");
-      if (!userId) throw new Error("User is required!");
 
-      const checkPost = await PostsModel.findById(postId); // hoac dung findOne({postId})
-      if (!checkPost) throw new Error("Post not found");
-
-      if (checkPost.authorId.toString() !== userId)
-        throw new Error("User is not authorized to edit this post");
-
-      checkPost.content = content;
-      await checkPost.save();
+      // Cập nhật nội dung và lưu thay đổi
+      post.content = content;
+      await post.save();
 
       res.status(200).send({
-        data: checkPost,
+        data: post,
         message: "Post updated successfully",
         success: true,
       });

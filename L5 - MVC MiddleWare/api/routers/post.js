@@ -1,5 +1,6 @@
 import { Router } from "express";
 import postsController from "../controllers/post.js";
+import { authorizePostEditor } from "../middleware/post.js";
 
 const PostRouter = Router();
 
@@ -7,7 +8,7 @@ const PostRouter = Router();
 PostRouter.post("", postsController.createPost);
 
 // 3. Viết API cho phép user chỉnh sửa lại bài post (chỉ user tạo bài viết mới được phép chỉnh sửa).
-PostRouter.put("/:postId", postsController.updatePost);
+PostRouter.put("/:postId", authorizePostEditor, postsController.updatePost);
 
 // 4. Viết API cho phép user được comment vào bài post.
 PostRouter.post("/:postId/comments", postsController.commentOnPosts);

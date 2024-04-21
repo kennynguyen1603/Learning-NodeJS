@@ -1,5 +1,6 @@
 import { Router } from "express";
 import usersController from "../controllers/user.js";
+import userAuthentication from "../middleware/user.js";
 
 const UserRouter = Router();
 
@@ -7,6 +8,6 @@ const UserRouter = Router();
 UserRouter.get("", usersController.getAllUser);
 
 // 1. Viết API việc đăng ký user.cv
-UserRouter.post("", usersController.createNewUser);
+UserRouter.post("", userAuthentication, usersController.createNewUser);
 
 export default UserRouter;
