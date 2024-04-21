@@ -27,6 +27,14 @@ const usersController = {
       });
     }
   },
+  getAllUser: async (req, res) => {
+    const allUsers = await UsersModel.find();
+    res.status(200).send({
+      data: allUsers,
+      message: "Get all user success",
+      success: true,
+    });
+  },
 };
 
 export default usersController;
