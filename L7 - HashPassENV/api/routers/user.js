@@ -1,7 +1,6 @@
 import { Router } from "express";
+import { userAuthentication } from "../middleware/user.js";
 import usersController from "../controllers/user.js";
-import userAuthentication from "../middleware/user.js";
-import { userAuthentication1 } from "../middleware/user.js";
 import authMiddleware from "../middleware/auth.js";
 
 const UserRouter = Router();
@@ -15,7 +14,8 @@ UserRouter.get(
 );
 
 // 1. Viết API việc đăng ký user.cv
-UserRouter.post("", userAuthentication, usersController.createNewUser);
-UserRouter.post("/register", userAuthentication1, usersController.register);
+UserRouter.post("/register", usersController.register);
 
+// 2. Đăng nhập
+UserRouter.post("/login", userAuthentication, usersController.login);
 export default UserRouter;

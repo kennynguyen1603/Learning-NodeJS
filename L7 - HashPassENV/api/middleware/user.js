@@ -1,20 +1,22 @@
 import UsersModel from "../models/users.js";
 import bcrypt from "bcrypt";
+
 const userAuthentication = async (req, res, next) => {
   try {
-    const { userName, email } = req.body;
-    if (!userName) throw new Error("userName is required!");
-    if (!email) throw new Error("email is required!");
+    const { email, password } = req.body;
+    if (!email) throw new Error("Email is required!");
+    if (!password) throw new Error("Password is required!");
 
-    const existedEmail = await UsersModel.findOne({ email });
-    if (existedEmail) throw new Error("Email already exists!");
+    const user = await UsersModel.findOne({ email });
+    if (!user) throw new Error("Email or password is incorrect");
 
-    const createdUser = await UsersModel.create({
-      userName,
-      email,
-    });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) throw new Error("Email or password is incorrect!");
 
-    req.user = createdUser;
+    const userObject = user.toObject();
+    delete userObject.password;
+
+    req.user = userObject;
     next();
   } catch (error) {
     res.status(403).send({
@@ -25,37 +27,5 @@ const userAuthentication = async (req, res, next) => {
   }
 };
 
-const userAuthentication1 = async (req, res, next) => {
-  try {
-    const { userName, email, password } = req.body;
-    const saltRounds = 10;
-    const salt = await bcrypt.genSalt(saltRounds);
-    if (!userName) throw new Error("userName is required!");
-    if (!email) throw new Error("email is required!");
-    if (!password) throw new Error("password is required!");
-
-    const existedEmail = await UsersModel.findOne({ email });
-    if (existedEmail) throw new Error("Email already exists!");
-
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const createdUser = await UsersModel.create({
-      userName,
-      email,
-      hashedPassword,
-      salt,
-    });
-
-    req.user = createdUser;
-    next();
-  } catch (error) {
-    res.status(403).send({
-      message: error.message,
-      data: null,
-      success: false,
-    });
-  }
-};
-
-export default userAuthentication;
-export { userAuthentication1 };
+// export default userAuthentication;
+export { userAuthentication };
