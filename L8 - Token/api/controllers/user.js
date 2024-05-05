@@ -46,6 +46,7 @@ const usersController = {
   login: async (req, res) => {
     res.status(200).send({
       data: req.user,
+      token: req.token,
       message: "Authentication successful!",
       success: true,
     });

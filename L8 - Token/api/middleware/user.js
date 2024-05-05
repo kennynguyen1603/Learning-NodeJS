@@ -1,6 +1,9 @@
 import UsersModel from "../models/users.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
+dotenv.config();
 const userAuthentication = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -13,10 +16,17 @@ const userAuthentication = async (req, res, next) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) throw new Error("Email or password is incorrect!");
 
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.MYSCRETKEY,
+      { expiresIn: "1m" }
+    );
+
     const userObject = user.toObject();
     delete userObject.password;
 
     req.user = userObject;
+    req.token = token;
     next();
   } catch (error) {
     res.status(403).send({

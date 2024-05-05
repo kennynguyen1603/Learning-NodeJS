@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import rootRouterV1 from "./api/routers/index.js";
-
+import authMiddleware from "./api/middleware/auth.js";
 dotenv.config();
 // await mongoose.connect(process.env.DATABASE_URL);
 
@@ -10,6 +10,13 @@ const app = express();
 app.use(express.json());
 
 app.use("/api/v1", rootRouterV1);
+
+app.get("/protected", authMiddleware.verifyToken, (req, res) => {
+  res.send({
+    message: "Welcome to the protected route!",
+    userId: req.user.userId,
+  });
+});
 
 // Kết nối tới MongoDB
 mongoose
