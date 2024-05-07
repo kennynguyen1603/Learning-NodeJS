@@ -1,5 +1,8 @@
 import UsersModel from "../models/users.js";
 import bcrypt from "bcrypt";
+import dotenv from "dotenv";
+
+dotenv.config();
 const usersController = {
   getAllUser: async (req, res) => {
     const allUsers = await UsersModel.find();
@@ -45,39 +48,69 @@ const usersController = {
   },
   login: async (req, res) => {
     res.status(200).send({
-      data: req.user,
-      token: req.token,
+      data: {
+        user: req.user,
+        accessToken: req.accessToken,
+        refreshToken: req.refreshToken,
+      },
       message: "Authentication successful!",
       success: true,
     });
   },
   changePassword: async (req, res) => {
     try {
-      // const { userId } = req.body;
       const { current_password, new_password } = req.body;
 
       if (!current_password) throw new Error("Current password is required!");
 
       if (!new_password) throw new Error("New password is required!");
 
-      const user = UsersModel.find((u) => u._id === req.userId);
+      const user = await UsersModel.findOne({ _id: req.userId });
 
-      if (!user || !bcrypt.compareSync(current_password, user.password)) {
-        return res
-          .status(400)
-          .json({ message: "Current password is incorrect" });
-      }
+      if (!user) throw new Error("User not found!");
 
+      if (!bcrypt.compareSync(current_password, user.password))
+        throw new Error("Current password is incorrect");
+
+      const saltRounds = process.env.SALTROUND;
       // Cập nhật mật khẩu mới
       user.password = bcrypt.hashSync(new_password, 10);
-      // res.json({ message: "Password changed successfully" });
+
       await user.save();
+
       res.status(200).send({
         data: user,
-        message: "Change password successful!",
+        message: "Password changed successfully!",
         success: true,
       });
-    } catch (error) {}
+    } catch (error) {
+      return res.status(400).send({
+        data: null,
+        message: error.message,
+        success: false,
+      });
+    }
+  },
+  refreshToken: (req, res) => {
+    try {
+      const user = req.user;
+      const newAccessToken = jwt.sign(
+        { userId: user._id, email: user.email },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: "15m" }
+      );
+
+      res.status(200).send({
+        accessToken: newAccessToken,
+        message: "New access token generated successfully.",
+        success: true,
+      });
+    } catch (error) {
+      res.status(400).send({
+        message: error.message,
+        success: false,
+      });
+    }
   },
 };
 

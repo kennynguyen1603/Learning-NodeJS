@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 import Collections from "../database/collection.js";
 
 const usersSchema = new mongoose.Schema({
-  userName: String,
-  email: String,
-  password: String,
+  userName: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
   role: {
     type: String,
     enum: ["ADMIN", "USER"],

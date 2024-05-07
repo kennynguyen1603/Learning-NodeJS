@@ -2,7 +2,6 @@ import { Router } from "express";
 import { userAuthentication } from "../middleware/user.js";
 import usersController from "../controllers/user.js";
 import authMiddleware from "../middleware/auth.js";
-
 const UserRouter = Router();
 
 // Lấy toàn bộ users
@@ -28,5 +27,9 @@ UserRouter.put(
 );
 
 // 4. Refresh token
-// UserRouter.post("/refresh-token", verifyRefreshToken, refreshToken);
+UserRouter.post(
+  "/refresh-token",
+  authMiddleware.verifyRefreshToken,
+  usersController.refreshToken
+);
 export default UserRouter;

@@ -1,6 +1,8 @@
 // import UsersModel from "../models/users.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import UsersModel from "../models/users.js";
+
 dotenv.config();
 const authMiddleware = {
   authorizationAdmin: async (req, res, next) => {
@@ -42,6 +44,42 @@ const authMiddleware = {
       req.userId = decoded.userId;
       next();
     });
+  },
+  verifyRefreshToken: async (req, res, next) => {
+    try {
+      const { refreshToken } = req.body;
+      if (!refreshToken) {
+        return res.status(403).send({ message: "Refresh Token is required." });
+      }
+
+      jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET,
+        async (err, decoded) => {
+          if (err) {
+            return res.status(403).send({ message: "Invalid Refresh Token." });
+          }
+
+          // Tìm kiếm người dùng với Refresh Token
+          const user = await UsersModel.findOne({
+            _id: decoded.userId,
+            // refreshToken,
+          });
+          if (!user) {
+            return res.status(403).send({ message: "Invalid Refresh Token." });
+          }
+
+          req.user = user;
+          next();
+        }
+      );
+    } catch (error) {
+      res.status(400).send({
+        data: null,
+        message: error.message,
+        success: false,
+      });
+    }
   },
 };
 

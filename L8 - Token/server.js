@@ -10,13 +10,6 @@ app.use(express.json());
 
 app.use("/api/v1", rootRouterV1);
 
-// app.get("/protected", authMiddleware.verifyToken, (req, res) => {
-//   res.send({
-//     message: "Welcome to the protected route!",
-//     userId: req.userId,
-//   });
-// });
-
 app.listen(process.env.PORT || 3000, () => {
   console.log(`Server is running on port ${process.env.PORT || 3000}`);
 });
