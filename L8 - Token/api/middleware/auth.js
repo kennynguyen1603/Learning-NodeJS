@@ -1,9 +1,11 @@
 // import UsersModel from "../models/users.js";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 const authMiddleware = {
   authorizationAdmin: async (req, res, next) => {
     try {
-      const { role } = req; // Lấy giá trị role từ request
+      const { role } = req;
       if (role === "ADMIN") {
         next();
       } else {
@@ -22,12 +24,18 @@ const authMiddleware = {
     }
   },
   verifyToken: (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res
+        .status(401)
+        .send({ message: "Unauthorized! No token provided." });
+    }
     const token = req.headers.authorization?.split(" ")[1]; // Extract the token from the Authorization header
     if (!token) {
       return res.status(401).send({ message: "No token provided." });
     }
 
-    jwt.verify(token, process.env.MYSCRETKEY, (err, decoded) => {
+    jwt.verify(token, process.env.MYSECRETKEY, (err, decoded) => {
       if (err) {
         return res.status(401).send({ message: "Unauthorized!" });
       }

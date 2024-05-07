@@ -18,7 +18,7 @@ const userAuthentication = async (req, res, next) => {
 
     const token = jwt.sign(
       { userId: user._id, email: user.email },
-      process.env.MYSCRETKEY,
+      process.env.MYSECRETKEY,
       { expiresIn: "1m" }
     );
 
