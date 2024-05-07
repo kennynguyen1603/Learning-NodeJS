@@ -51,6 +51,34 @@ const usersController = {
       success: true,
     });
   },
+  changePassword: async (req, res) => {
+    try {
+      // const { userId } = req.body;
+      const { current_password, new_password } = req.body;
+
+      if (!current_password) throw new Error("Current password is required!");
+
+      if (!new_password) throw new Error("New password is required!");
+
+      const user = UsersModel.find((u) => u._id === req.userId);
+
+      if (!user || !bcrypt.compareSync(current_password, user.password)) {
+        return res
+          .status(400)
+          .json({ message: "Current password is incorrect" });
+      }
+
+      // Cập nhật mật khẩu mới
+      user.password = bcrypt.hashSync(new_password, 10);
+      // res.json({ message: "Password changed successfully" });
+      await user.save();
+      res.status(200).send({
+        data: user,
+        message: "Change password successful!",
+        success: true,
+      });
+    } catch (error) {}
+  },
 };
 
 export default usersController;

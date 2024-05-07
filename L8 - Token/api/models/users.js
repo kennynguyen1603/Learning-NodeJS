@@ -10,6 +10,7 @@ const usersSchema = new mongoose.Schema({
     enum: ["ADMIN", "USER"],
     default: "USER",
   },
+  refreshToken: { type: String },
 });
 
 const UsersModel = mongoose.model(Collections.USERS, usersSchema);

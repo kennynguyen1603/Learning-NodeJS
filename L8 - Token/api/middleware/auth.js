@@ -30,12 +30,12 @@ const authMiddleware = {
         .status(401)
         .send({ message: "Unauthorized! No token provided." });
     }
-    const token = req.headers.authorization?.split(" ")[1]; // Extract the token from the Authorization header
+    const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
       return res.status(401).send({ message: "No token provided." });
     }
 
-    jwt.verify(token, process.env.MYSECRETKEY, (err, decoded) => {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
       if (err) {
         return res.status(401).send({ message: "Unauthorized!" });
       }

@@ -16,17 +16,29 @@ const userAuthentication = async (req, res, next) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) throw new Error("Email or password is incorrect!");
 
+    // access token
     const token = jwt.sign(
       { userId: user._id, email: user.email },
-      process.env.MYSECRETKEY,
+      process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "1m" }
     );
+
+    // refresh token
+    const refreshToken = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    user.refreshToken = refreshToken;
+    await user.save();
 
     const userObject = user.toObject();
     delete userObject.password;
 
     req.user = userObject;
     req.token = token;
+    req.refToken = refreshToken;
     next();
   } catch (error) {
     res.status(403).send({

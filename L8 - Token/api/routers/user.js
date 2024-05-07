@@ -13,9 +13,20 @@ UserRouter.get(
   usersController.getAllUser
 );
 
-// 1. Viết API việc đăng ký user.cv
+// 1. Viết API việc đăng ký user.
 UserRouter.post("/register", usersController.register);
 
 // 2. Đăng nhập
 UserRouter.post("/login", userAuthentication, usersController.login);
+
+// 3. change password
+UserRouter.put(
+  "/change-password",
+  // userAuthentication,
+  authMiddleware.verifyToken,
+  usersController.changePassword
+);
+
+// 4. Refresh token
+// UserRouter.post("/refresh-token", verifyRefreshToken, refreshToken);
 export default UserRouter;
