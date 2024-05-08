@@ -2,6 +2,7 @@ import UsersModel from "../models/users.js";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+import { token } from "../utils/index.js";
 dotenv.config();
 const usersController = {
   getAllUser: async (req, res) => {
@@ -94,12 +95,16 @@ const usersController = {
   refreshToken: (req, res) => {
     try {
       const user = req.user;
-      console.log(user);
-      const newAccessToken = jwt.sign(
-        { userId: user._id, email: user.email },
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "15m" }
-      );
+      // const newAccessToken = jwt.sign(
+      //   { userId: user._id, email: user.email },
+      //   process.env.ACCESS_TOKEN_SECRET,
+      //   { expiresIn: "15m" }
+      // );
+
+      const newAccessToken = token.generateToken({
+        userId: user._id,
+        email: user.email,
+      });
 
       res.status(200).send({
         accessToken: newAccessToken,
