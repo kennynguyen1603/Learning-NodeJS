@@ -61,15 +61,13 @@ const authMiddleware = {
           }
 
           // Tìm kiếm người dùng với Refresh Token
-          const user = await UsersModel.findOne({
-            _id: decoded.userId,
-            // refreshToken,
-          });
-          if (!user) {
+          const user = await UsersModel.findById(decoded.userId);
+
+          if (!user || user.refreshToken !== refreshToken) {
             return res.status(403).send({ message: "Invalid Refresh Token." });
           }
-
           req.user = user;
+          // console.log(req.user);
           next();
         }
       );

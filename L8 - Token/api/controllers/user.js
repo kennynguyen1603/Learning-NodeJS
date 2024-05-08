@@ -1,7 +1,7 @@
 import UsersModel from "../models/users.js";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
-
+import jwt from "jsonwebtoken";
 dotenv.config();
 const usersController = {
   getAllUser: async (req, res) => {
@@ -72,7 +72,7 @@ const usersController = {
       if (!bcrypt.compareSync(current_password, user.password))
         throw new Error("Current password is incorrect");
 
-      const saltRounds = process.env.SALTROUND;
+      // const saltRounds = process.env.SALTROUND;
       // Cập nhật mật khẩu mới
       user.password = bcrypt.hashSync(new_password, 10);
 
@@ -94,6 +94,7 @@ const usersController = {
   refreshToken: (req, res) => {
     try {
       const user = req.user;
+      console.log(user);
       const newAccessToken = jwt.sign(
         { userId: user._id, email: user.email },
         process.env.ACCESS_TOKEN_SECRET,
@@ -107,6 +108,7 @@ const usersController = {
       });
     } catch (error) {
       res.status(400).send({
+        data: null,
         message: error.message,
         success: false,
       });

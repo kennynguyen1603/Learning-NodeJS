@@ -35,6 +35,7 @@ const userAuthentication = async (req, res, next) => {
 
     const userObject = user.toObject();
     delete userObject.password;
+    delete userObject.refreshToken;
     // delete userObject.refreshToken;
     req.user = userObject;
     req.accessToken = token;
