@@ -166,7 +166,6 @@ app.get("/api/v1/posts/:postId/comments", async (req, res) => {
   try {
     const { postId } = req.params;
     const existingPost = await PostsModel.findById(postId);
-    console.log(existingPost);
     if (!existingPost) {
       return res.status(404).send({
         message: "Post not found",
@@ -183,7 +182,6 @@ app.get("/api/v1/posts/:postId/comments", async (req, res) => {
       succcess: true,
     });
   } catch (error) {
-    console.error("Error fetching comments:", error);
     res.status(500).send({
       message: "Failed to retrieve comments",
       success: false,
