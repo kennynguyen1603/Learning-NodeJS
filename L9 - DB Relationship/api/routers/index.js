@@ -1,6 +1,7 @@
 import { Router } from "express";
 import PostsModel from "../models/posts.js";
 import CommentsModel from "../models/comments.js";
+import UsersModel from "../models/users.js";
 const rootRouterV1 = Router();
 
 rootRouterV1.get("/posts/:postId/comments", async (req, res) => {
@@ -34,4 +35,37 @@ rootRouterV1.get("/posts/:postId/comments", async (req, res) => {
   }
 });
 
+rootRouterV1.post("/posts/:postId/comments", async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { content, authorId } = req.body;
+    if (!content) throw new Error("Content is required!");
+    if (!authorId) throw new Error("AuthorId is required!");
+    if (!postId) throw new Error("PostId is required!");
+
+    const existedPost = await PostsModel.findById(postId);
+    if (!existedPost) throw new Error("Post is not valid");
+
+    const existedUser = await UsersModel.findById(authorId);
+    if (!existedUser) throw new Error("User is not valid");
+
+    const createComment = await CommentsModel.create({
+      postId,
+      content,
+      authorId,
+    });
+
+    res.status(201).send({
+      data: createComment,
+      message: "create comment successfull",
+      succcess: true,
+    });
+  } catch (error) {
+    res.status(403).send({
+      message: error.message,
+      data: null,
+      success: false,
+    });
+  }
+});
 export default rootRouterV1;
